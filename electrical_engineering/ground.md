@@ -1,0 +1,19 @@
+Say for example we have 3 pcbs, each has to share a common ground. They are powered by a single supply. What is the "best" way to connect the all the grounds together?
+
+As correctly stated by u/nixiebunny, it will depend on the design of the circuit. For low-power, low-frequency circuits, the ordering of ground connections doesn't usually matter all that much so long as the entire path is able to carry all of the return current from the power supply.
+
+Remember that the ground network current paths aren't going to be ideal zero-ohm superconductors; they're going to have (typically quite small) resistance and inductance, as well as (also very small) parasitic capacitances to other parts of the circuit. The more overall current that flows back through the ground network, the more the resistance portion will matter, and the frequency will determine how much the inductance and capacitance matters.
+
+For example, if you have a board pulling several amps of current that is connected via thin traces and small wires, possibly through other boards, you might start to notice that the "ground" points furthest from the power supply show a significant potential difference versus the "real" ground at the power supply output, because all those thin paths ended up being, say, 0.25 ohms or something, which at 10 amps means you're dissipating 2.5 volts across the ground return alone. Obviously, in this scenario, daisy-chaining will be significantly worse than all of the boards connecting directly back to the power supply.
+
+Likewise, if you have higher-frequency signals, it's important to remember that the return portion of those signals can interfere with one another. This behaviour can get quite complicated very quickly, so if it applies to your project you might want to look into it specifically -- there are some great YouTube videos on the topic.
+
+If neither of these considerations apply, then you probably don't have to worry all that much about the ground arrangement except to avoid specific pitfalls like large ground loops (which can pick up unexpected current from magnetic fields), and to ensure that there's a clean path with enough current-carrying capacity to handle the expected load.
+
+Is there potential issues with wiring all of the gnds of each pcb separately back the negative of the supply? Is it better to daisy chain the gnds together and have a one lead going back the gnd supply?
+
+Generally speaking, having all of the ground potentials radiate out from a central point (typically the power supply) will minimize the impedance to any given destination, so if you can do this it's often preferred, although it might be less convenient in terms of wiring and other physical considerations depending on how the overall device is designed.
+
+Small edit: Mileage can vary here, though; if, for example, you have a DC motor driver board, where the control circuitry from the driver board is further down the ground path than the return from the motor (which will potentially carry high currents), and a telemetry board that is just logic circuitry, you might get an unpleasant surprise where the two logic zones have significantly different grounds if both are drawn from separate star connections to the power supply. In this scenario, daisy-chaining the telemetry board from the end of the driver might work better, since both logic zones will use a similar post-motor (shifted) ground that is unlikely to be affected by their small logic-level currents. Ideally you would want to avoid this by adjusting the ground paths to the logic circuitry, though.
+
+Second edit: In the event that you're dealing with hazardous (mains-level) voltages, there are a large number of additional concerns that will come into play for safety reasons. Let us know if that's the case as that requires its own specific set of advice and cautions.

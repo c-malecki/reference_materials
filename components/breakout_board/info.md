@@ -1,0 +1,1 @@
+https://osoyoo.com/2025/02/07/osoyoo-breakout-board-for-38p-esp32/
